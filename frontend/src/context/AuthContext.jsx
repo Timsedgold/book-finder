@@ -7,9 +7,9 @@ import axios from 'axios';
 // Create an axios instance for your API calls
 // Ensures all requests through this instance can be intercepted
 const apiClient = axios.create({
-  baseURL: 'http://localhost:3001', // Your backend API base URL
+  // Use Vite's env variable system. Fallback to localhost for local dev.
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
 });
-
 // Create the context
 const AuthContext = createContext(null);
 
