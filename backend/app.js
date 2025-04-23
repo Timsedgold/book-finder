@@ -20,6 +20,11 @@ app.use(
 app.use(express.json());
 app.use(authenticateJWT);
 
+app.get("/", (req, res) => {
+  // Simple response to confirm the API is running
+  res.send("BookFinder Backend API is alive!");
+});
+
 app.use("/books", bookRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
