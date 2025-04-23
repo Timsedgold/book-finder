@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/favorites.schema.json",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "integer",
+      "description": "The user who favorited the book"
+    },
+    "book_id": {
+      "type": "integer",
+      "description": "The book that has been favorited"
+    }
+  },
+  "required": ["user_id", "book_id"]
+}

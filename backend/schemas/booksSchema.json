@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/books.schema.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Unique identifier for the book"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "description": "Title of the book"
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "description": "Author of the book"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the book"
+    },
+    "thumbnail": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to the thumbnail image of the book"
+    },
+    "preview_link": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL for the Google Preview of the book"
+    }
+  },
+  "required": ["title", "author", "description", "thumbnail", "preview_link"]
+}

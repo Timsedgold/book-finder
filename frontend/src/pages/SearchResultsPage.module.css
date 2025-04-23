@@ -1,0 +1,142 @@
+/* Styles translated from Tailwind for SearchResultsPage */
+
+.resultsContainer {
+  padding: 1.5rem; /* p-6 */
+  max-width: 72rem; /* max-w-6xl */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.resultsTitle {
+  font-size: 1.5rem; /* text-2xl */
+  line-height: 2rem;
+  font-weight: 700; /* font-bold */
+  margin-bottom: 1.5rem; /* mb-6 */
+  color: #1f2937; /* text-gray-800 */
+}
+
+.queryHighlight {
+  color: #2563eb; /* text-blue-600 */
+}
+
+.textMuted { /* Used for 'No books found' and potentially author */
+  color: #6b7280; /* text-gray-500 */
+  font-size: 0.875rem; /* text-sm */
+}
+
+.booksGrid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr)); /* grid-cols-1 */
+  gap: 2rem; /* gap-8 */
+}
+
+.bookCard {
+  background-color: #ffffff; /* bg-white */
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow */
+  padding: 1.5rem; /* p-6 */
+  display: flex;
+  gap: 1.5rem; /* gap-6 */
+  align-items: flex-start; /* items-start */
+}
+
+.bookThumbnail {
+  width: 8rem; /* w-32 */
+  height: 12rem; /* h-48 */
+  object-fit: cover;
+  border-radius: 0.375rem; /* rounded-md */
+  flex-shrink: 0; /* Prevent image from shrinking */
+}
+
+.imagePlaceholder {
+  width: 8rem; /* w-32 */
+  height: 12rem; /* h-48 */
+  flex-shrink: 0; /* Prevent placeholder from shrinking */
+  background-color: #e5e7eb; /* bg-gray-200 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem; /* text-sm */
+  color: #6b7280; /* text-gray-500 */
+  border-radius: 0.375rem; /* rounded-md */
+}
+
+.bookInfo {
+  flex-grow: 1; /* flex-1 */
+  min-width: 0; /* Prevent overflow issues in flex containers */
+}
+
+.bookTitle {
+  font-size: 1.25rem; /* text-xl */
+  line-height: 1.75rem;
+  font-weight: 600; /* font-semibold */
+  color: #1f2937; /* text-gray-800 */
+  margin-bottom: 0.25rem; /* Add some space */
+}
+
+.bookAuthor {
+  color: #6b7280; /* text-gray-500 */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.25rem;
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.bookDescription {
+  color: #4b5563; /* text-gray-600 */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.25rem;
+  /* Add word-wrap for long descriptions if needed */
+  /* overflow-wrap: break-word; */
+}
+
+.readMoreLink {
+  color: #3b82f6; /* text-blue-500 */
+  margin-left: 0.25rem; /* ml-1 */
+  cursor: pointer;
+  display: inline;
+  font-weight: 500; /* Make it slightly bolder */
+}
+
+.readMoreLink:hover {
+  text-decoration: underline;
+}
+
+.bookActions {
+  margin-top: 0.75rem; /* mt-3 */
+  display: flex;
+  gap: 1rem; /* gap-4 */
+  align-items: center;
+}
+
+.favoriteButton {
+  color: #ef4444; /* text-red-500 */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.25rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.favoriteButton:hover {
+  color: #dc2626; /* hover:text-red-600 */
+}
+
+.previewLink {
+  color: #3b82f6; /* text-blue-500 */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.25rem;
+  text-decoration: none; /* Remove default underline */
+}
+
+.previewLink:hover {
+  text-decoration: underline;
+}
+
+.loading { /* Simple loading style */
+ text-align: center;
+ margin-top: 2rem;
+ font-size: 1.25rem;
+ color: #6b7280;
+}

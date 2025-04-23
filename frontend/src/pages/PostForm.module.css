@@ -1,0 +1,115 @@
+.formContainer {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.formContainer h2 {
+  text-align: center;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1.25rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.formInput, .formTextarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.formInput:focus, .formTextarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+/* Specific styling for the React Quill editor container */
+.editorContainer {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  overflow: hidden; /* Ensures toolbar corners match */
+}
+
+/* React Quill overrides (optional, adjusts default look) */
+.editorContainer :global(.ql-toolbar) {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom: 1px solid #d1d5db !important; /* Add separator */
+  background-color: #f9fafb; /* Light gray toolbar background */
+}
+
+.editorContainer :global(.ql-container) {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  min-height: 250px; /* Give the editor some default height */
+  font-size: 1rem;
+  border: none !important; /* Remove Quill's own border */
+}
+
+.submitButton {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #3b82f6; /* bg-blue-500 */
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.submitButton:hover {
+  background-color: #2563eb; /* hover:bg-blue-600 */
+}
+
+.submitButton:disabled {
+  background-color: #9ca3af; /* bg-gray-400 */
+  cursor: not-allowed;
+}
+
+.error {
+  color: #ef4444;
+  background-color: #fee2e2;
+  border: 1px solid #fca5a5;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.message { /* For loading states */
+  text-align: center;
+  color: #6b7280;
+  margin-top: 1rem;
+  padding: 1rem;
+}
+
+.imagePreviewContainer {
+  margin-top: 0.75rem;
+}
+
+.imagePreview {
+  max-width: 200px; /* Limit preview size */
+  max-height: 200px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  object-fit: cover;
+}

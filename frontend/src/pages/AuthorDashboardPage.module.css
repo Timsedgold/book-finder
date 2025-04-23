@@ -1,0 +1,102 @@
+.dashboardContainer {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboardContainer h2 {
+  text-align: center;
+  color: #1f2937; /* text-gray-800 */
+  margin-bottom: 1.5rem;
+}
+
+.createButton {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #10b981; /* bg-emerald-500 */
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.createButton:hover {
+  background-color: #059669; /* bg-emerald-600 */
+}
+
+.postList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.postItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e5e7eb; /* border-gray-200 */
+}
+
+.postItem:last-child {
+  border-bottom: none;
+}
+
+.postTitle {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #374151; /* text-gray-700 */
+}
+
+.postActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.editButton, .deleteButton {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+}
+
+.editButton {
+  background-color: #3b82f6; /* bg-blue-500 */
+  color: white;
+}
+.editButton:hover {
+  background-color: #2563eb; /* bg-blue-600 */
+}
+
+.deleteButton {
+  background-color: #ef4444; /* bg-red-500 */
+  color: white;
+}
+.deleteButton:hover {
+  background-color: #dc2626; /* bg-red-600 */
+}
+
+.message {
+  text-align: center;
+  color: #6b7280; /* text-gray-500 */
+  margin-top: 1rem;
+  padding: 1rem;
+}
+
+.error {
+  text-align: center;
+  color: #ef4444; /* text-red-500 */
+  background-color: #fee2e2; /* bg-red-100 */
+  border: 1px solid #fca5a5; /* border-red-300 */
+  padding: 0.75rem;
+  border-radius: 0.375rem; /* rounded-md */
+  margin-bottom: 1rem;
+  font-size: 0.875rem; /* text-sm */
+}
