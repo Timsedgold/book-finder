@@ -1,65 +1,86 @@
 // src/pages/SearchResultsPage.jsx
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState } from "react"; // Import React
 import { useLocation } from "react-router-dom";
-import { useAuth } from '../context/AuthContext'; // Use context for API calls
-import Modal from '../pages/Modal'; // Import the Modal component
-import styles from './SearchResultsPage.module.css'; // Your existing styles
+import { useAuth } from '../context/AuthContext'; // Use context for API calls & apiClient
+import Modal from '../components/Modal'; // Import the Modal component
+import styles from './SearchResultsPage.module.css'; // Your existing styles for this page
 
 export default function SearchResultsPage() {
   const { apiClient } = useAuth(); // Get configured client with auth token
   const [books, setBooks] = useState([]); // Will hold combined results
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [expandedBooks, setExpandedBooks] = useState(new Set()); // For description expansion
+  const [error, setError] = useState(''); // State to hold STRING error messages
+  const [expandedBooks, setExpandedBooks] = useState(new Set());
   const { search } = useLocation();
 
-  // --- Modal State ---
+  // Modal State
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', content: '' });
-  // --------------------
 
   const query = new URLSearchParams(search).get("query");
 
-  // Fetch combined books and posts
+  // Fetch combined books and posts when query changes
   useEffect(() => {
     async function fetchResults() {
+      // If there's no query, don't fetch, show nothing found (or handle differently)
       if (!query) {
         setBooks([]);
         setLoading(false);
+        setError("Please enter a search term on the homepage."); // Set informative message
         return;
       }
-      setError('');
+
+      setError(''); // Clear previous errors before fetching
       setLoading(true);
+      setBooks([]); // Clear previous results
+
       try {
-        // GET /books now returns combined results from backend
+        console.log(`SearchResultsPage: Fetching results for query "${query}"`);
+        // Use apiClient which should have auth headers set by AuthContext
+        // The backend GET /books should now require login
         const res = await apiClient.get(`/books?query=${encodeURIComponent(query)}`);
-        setBooks(res.data.books || []);
+        console.log("SearchResultsPage: API Response OK", res.data);
+        setBooks(res.data.books || []); // Assuming backend returns { books: [...] }
+
       } catch (err) {
-        console.error("Error fetching search results (raw error):", err); // Log raw error
-        console.error("Error response data:", err.response?.data);     // Log response data
-    
-        // --- START REPLACE ---
-        let message = 'Failed to fetch results.'; // Default message
+        // --- Robust Error Handling ---
+        console.error("SearchResultsPage: Error fetching search results (raw error):", err);
+        console.error("SearchResultsPage: Error response data:", err.response?.data);
+
         const errorData = err.response?.data;
-    
-        if (typeof errorData === 'string' && errorData.length > 0) { // Check if errorData itself is a non-empty string
+        let message = 'Failed to fetch results.'; // Default error message
+
+        // Try to extract a more specific message from the error response
+        if (typeof errorData === 'string' && errorData.length > 0) {
             message = errorData;
-        } else if (typeof errorData?.message === 'string') { // Check for object with message property
+        } else if (typeof errorData?.message === 'string') { // Check for object with message
             message = errorData.message;
-        } else if (typeof errorData?.error === 'string') { // Check for object with error property
+        } else if (typeof errorData?.error === 'string') { // Check for object with error
             message = errorData.error;
-        } else if (err?.message) { // Fallback to Axios or generic error message
-            message = err.message;
+        } else if (err?.message) { // Fallback to Axios/generic error message
+            // Customize common network/Axios errors if desired
+            if (err.message.includes('Network Error')) {
+                message = 'Network Error: Could not connect to the server.';
+            } else if (err.response?.status === 401) {
+                // This might be set here OR handled entirely by the interceptor/logout
+                message = 'Authentication error. You might need to log in again.';
+            } else {
+                 message = err.message; // Default Axios message
+            }
         }
-        console.log("Setting error state string to:", message); // Log the message being set
-        setError(message); // Ensure 'message' is definitely a string
+        console.log("SearchResultsPage: Setting error state string to:", message);
+        setError(message); // Set the state ONLY with the string message
+        // --- End Robust Error Handling ---
+
         setBooks([]); // Clear results on error
       } finally {
-        setLoading(false);
+        setLoading(false); // Ensure loading is set to false
       }
     }
+
     fetchResults();
-  }, [query, apiClient]); // Re-fetch if query or apiClient changes
+  }, [query, apiClient]); // Dependencies for the effect
 
 
   // --- Toggle Description Expansion ---
@@ -86,14 +107,12 @@ export default function SearchResultsPage() {
     setModalOpen(false);
     setModalContent({ title: '', content: '' });
   };
-  // -----------------------------
 
-  // --- Description Snippet Logic (Truncate if needed, don't truncate modal content) ---
+  // --- Description Snippet Logic ---
   const getDescriptionSnippet = (book) => {
     const description = book.description || "";
     const isExpanded = expandedBooks.has(book.id);
-
-    // Always show full content in modal preview, truncate in list view if long
+    // Show full content in modal, but truncate in list view if long & not expanded
     if (isExpanded || description.length <= 150) {
       return description;
     }
@@ -104,18 +123,20 @@ export default function SearchResultsPage() {
      const description = book.description || "";
      return description.length > 150;
   }
-  // --------------------------------
 
   // --- Render Logic ---
+  // Initial loading state
   if (loading) {
-    return <div className={styles.message}>Loading results...</div>; // Use a shared message style?
+    return <div className={styles.message}>Loading results for "{query}"...</div>;
   }
+  // Error display - now guaranteed to be a string
    if (error) {
-    return <div className={styles.error}>{error}</div>; // Use a shared error style
+    return <div className={styles.error}>{error}</div>;
   }
 
+  // Main content render
   return (
-    <> {/* Render Modal outside the main container flow */}
+    <> {/* Fragment allows Modal rendering outside main container */}
       <div className={styles.resultsContainer}>
         <h2 className={styles.resultsTitle}>
           Search results for: <span className={styles.queryHighlight}>{query}</span>
@@ -128,14 +149,10 @@ export default function SearchResultsPage() {
             {/* Map over combined books and posts */}
             {books.map((item) => (
               item && <div key={item.id} className={styles.bookCard}>
-                {/* Use item thumbnail (will be default for local posts) */}
                 <img
-                  // Use default if thumbnail is null/empty, or if explicitly local?
-                  // Backend should provide the default path in item.thumbnail for local posts
                   src={item.thumbnail || '/images/default-post-thumbnail.png'}
                   alt={item.title || 'Cover'}
                   className={styles.bookThumbnail}
-                  // Add error handling for broken image links if needed
                   onError={(e) => { e.target.onerror = null; e.target.src='/images/default-post-thumbnail.png' }}
                 />
 
@@ -143,14 +160,12 @@ export default function SearchResultsPage() {
                   <h3 className={styles.bookTitle}>
                     {item.title || 'No Title'}
                   </h3>
-                  {/* Author: Google Book authors or local post username */}
                   {item.author && (
                     <p className={styles.bookAuthor}>
                       by {item.author}
                     </p>
                   )}
 
-                  {/* Description/Content Snippet */}
                   <p className={styles.bookDescription}>
                      {getDescriptionSnippet(item)}
                      {showReadMore(item) && (
@@ -163,19 +178,16 @@ export default function SearchResultsPage() {
                       )}
                   </p>
 
-                  {/* Action Buttons */}
                   <div className={styles.bookActions}>
-                     {/* Add Favorite functionality here if needed */}
+                     {/* Favorite Button Placeholder */}
                      {/* <button className={styles.favoriteButton}>❤️ Favorite</button> */}
 
                      {/* Conditional Preview Button/Link */}
                     {item.isLocal ? (
-                      // Local post: Button opens modal
                       <button onClick={() => openModal(item)} className={styles.previewButton}>
                          📖 Read Post
                       </button>
                     ) : item.preview_link ? (
-                      // Google Book: Link opens in new tab
                       <a
                         href={item.preview_link}
                         target="_blank"
@@ -185,7 +197,6 @@ export default function SearchResultsPage() {
                         📖 Preview
                       </a>
                     ) : (
-                      // No preview available for this Google Book
                       <span className={styles.noPreview}>Preview not available</span>
                     )}
                   </div>
@@ -198,13 +209,9 @@ export default function SearchResultsPage() {
 
       {/* Modal Definition */}
       <Modal isOpen={modalOpen} onClose={closeModal} title={modalContent.title}>
-         {/* Render post content from state.
-             WARNING: Only use dangerouslySetInnerHTML if you are CERTAIN the HTML
-             coming from modalContent.content (your 'posts' table) is properly
-             SANITIZED on the backend before saving/sending. Otherwise, prefer
-             rendering as plain text to prevent XSS attacks. */}
+         {/* WARNING: Sanitize HTML content on backend before using dangerouslySetInnerHTML */}
          <div className={styles.modalBody} dangerouslySetInnerHTML={{ __html: modalContent.content }}></div>
-         {/* --- OR --- Render as plain text (safer if not sanitized HTML):
+         {/* --- OR --- Render as plain text:
          <div className={styles.modalBody} style={{ whiteSpace: 'pre-wrap' }}>
              {modalContent.content}
          </div>
