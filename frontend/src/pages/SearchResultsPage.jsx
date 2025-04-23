@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"; // Import React
 import { useLocation } from "react-router-dom";
 import { useAuth } from '../context/AuthContext'; // Use context for API calls & apiClient
-import Modal from '../components/Modal'; // Import the Modal component
+import Modal from '../pages/Modal'; // Import the Modal component
 import styles from './SearchResultsPage.module.css'; // Your existing styles for this page
 
 export default function SearchResultsPage() {
