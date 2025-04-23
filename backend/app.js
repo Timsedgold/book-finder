@@ -3,7 +3,7 @@
 /** Express app for books. */
 
 const express = require("express");
-const path = require('path'); // Import path module
+const path = require("path"); // Import path module
 const cors = require("cors");
 const dotenv = require("dotenv");
 const { NotFoundError } = require("./expressError");
@@ -14,10 +14,9 @@ const userRoutes = require("./routes/users");
 const postRoutes = require("./routes/posts");
 
 const app = express();
-// Serve static files from the 'uploads' directory
-// The '/uploads' argument specifies the URL path prefix
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(cors());
+app.use(
+  cors({ origin: [process.env.FRONTEND_URL || "http://localhost:5173"] })
+);
 app.use(express.json());
 app.use(authenticateJWT);
 

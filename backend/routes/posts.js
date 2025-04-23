@@ -5,95 +5,36 @@ const express = require("express");
 const Post = require("../models/post");
 const { ensureLoggedIn } = require("../middleware/auth"); // Import ensureLoggedIn
 const { BadRequestError } = require("../expressError");
-const multer = require('multer'); // Require multer
-const path = require('path'); // Require path
-
-// --- Multer Configuration (Place this block here!) ---
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      // Ensure 'uploads/' directory exists in your backend root
-      cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-    }
-  });
-  
-  const fileFilter = (req, file, cb) => {
-      if (file.mimetype.startsWith('image/')) {
-          cb(null, true);
-      } else {
-          // Use new Error() for multer file filter rejections
-          cb(new Error('Only image files are allowed!'), false);
-      }
-  };
-  
-  // This line defines the 'upload' variable
-  const upload = multer({
-      storage: storage,
-      fileFilter: fileFilter,
-      limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
-  });
-  
 const router = new express.Router();
 
 /** POST /posts - Create new post
- * Requires login. Handles file upload for thumbnail.
- * Expects multipart/form-data: { title, content, thumbnailImage (file) }
+ * Requires login.
+ * Expects JSON: { title, content, thumbnailUrl? (optional URL string) }
  * Returns: { post: { id, title, content, authorId, thumbnailUrl, ... } }
  */
-// Apply multer middleware BEFORE ensureLoggedIn and the main handler
-// 'thumbnailImage' must match the key used in the frontend FormData
-router.post("/", upload.single('thumbnailImage'), ensureLoggedIn, async function (req, res, next) {
-    try {
-      const { title, content } = req.body;
-      const authorId = res.locals.user.userId;
-  
-      // --- Get Thumbnail URL ---
-      let thumbnailUrl = null;
-      if (req.file) {
-        // Construct the URL path relative to how you serve static files
-        // If app.use('/uploads', ...) serves from 'uploads/', the path is '/uploads/filename'
-        thumbnailUrl = `/uploads/${req.file.filename}`;
-         console.log("Uploaded file:", req.file);
-         console.log("Thumbnail URL:", thumbnailUrl);
-      } else {
-          console.log("No thumbnail image uploaded.");
-      }
-      // ------------------------
-  
-  
-      if (!title || !content) {
-        throw new BadRequestError("Title and content are required.");
-      }
-  
-      // Pass thumbnailUrl to the create method
-      const post = await Post.create({ title, content, authorId, thumbnailUrl });
-      return res.status(201).json({ post });
-  
-    } catch (err) {
-      // Handle potential errors from multer (like file size limit) or model
-      return next(err);
-    }
-  });
 
-/** POST /posts - Create new post
- * Requires login.
- * Expects: { title, content }
- * Returns: { post: { id, title, content, authorId, createdAt, updatedAt } }
- */
 router.post("/", ensureLoggedIn, async function (req, res, next) {
   try {
-    const { title, content } = req.body;
-    const authorId = res.locals.user.userId; // Get user ID from token payload via middleware
+    // Get data from JSON body now, including optional thumbnailUrl
+    const { title, content, thumbnailUrl } = req.body; // <--- Get thumbnailUrl from body
+    const authorId = res.locals.user.userId;
+
+    // ThumbnailUrl is now optional on the backend, can be null or empty string
+    const finalThumbnailUrl = thumbnailUrl?.trim() ? thumbnailUrl.trim() : null; // Basic trim or nullify if empty
 
     if (!title || !content) {
-        throw new BadRequestError("Title and content are required.");
+      throw new BadRequestError("Title and content are required.");
     }
 
-    const post = await Post.create({ title, content, authorId });
+    // Pass the received (or null) thumbnailUrl to the create method
+    const post = await Post.create({
+        title,
+        content,
+        authorId,
+        thumbnailUrl: finalThumbnailUrl // Pass the URL string
+    });
     return res.status(201).json({ post });
+
   } catch (err) {
     return next(err);
   }
